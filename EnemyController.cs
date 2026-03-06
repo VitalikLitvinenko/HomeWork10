@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public float speed = 2f;
-    public float distance = 2f;
+    public float Speed = 2f;
+    public float Distance = 2f;
 
     private Vector2 _startPosition;
 
