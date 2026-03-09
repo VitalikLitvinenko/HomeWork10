@@ -4,13 +4,15 @@ public class PlayerController : MonoBehaviour
 {
     public float Speed = 5f;
     public float JumpForce = 12f;
-    public float KnockbackForce = 8f; 
+    public float KnockbackForce = 8f;
     public float KnockbackDuration = 0.2f;
 
     private Rigidbody2D _rigidbody;
     private SpriteRenderer _playerRenderer;
+    private Animator _animator;
     private UIManager _uiManager;
     private bool _isGrounded;
+    private bool _isJumping;
     private bool _isKnockedBack;
     private float _knockbackTimer;
 
@@ -18,6 +20,7 @@ public class PlayerController : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _playerRenderer = GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
         _uiManager = FindObjectOfType<UIManager>();
         _playerRenderer.color = Color.white;
         _playerRenderer.flipX = false;
@@ -40,9 +43,13 @@ public class PlayerController : MonoBehaviour
         {
             y = JumpForce;
             _isGrounded = false;
+            _isJumping = true;
         }
 
         _rigidbody.linearVelocity = new Vector2(x * Speed, y);
+
+        _animator.SetBool("IsWalking", x != 0 && !_isJumping);
+        _animator.SetBool("IsJumping", _isJumping);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -50,6 +57,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             _isGrounded = true;
+            _isJumping = false;
             return;
         }
 
@@ -63,8 +71,6 @@ public class PlayerController : MonoBehaviour
 
             _isKnockedBack = true;
             _knockbackTimer = KnockbackDuration;
-
-            Debug.Log("Столкновение с врагом: " + collision.gameObject.name, collision.gameObject);
         }
     }
 
@@ -79,8 +85,6 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             _playerRenderer.color = Color.white;
-
-            Debug.Log("Разлетелись с врагом: " + collision.gameObject.name, collision.gameObject);
         }
     }
 }
